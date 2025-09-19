@@ -1,16 +1,23 @@
 import asyncio
 import functools
 import inspect
+
 from typing import Callable, Awaitable, Protocol, Any, Iterable
 
-__all__ = ("requires", "skip_guard", "guard_commands")
+__all__ = (
+    "requires",
+    "skip_guard",
+    "guard_commands",
+)
 
 
 class Check(Protocol):
-    def __call__(self, ctx, *a, **kw) -> (
-            Awaitable[tuple[bool, str | None]] | tuple[bool, str | None]
-    ):
-        ...
+    def __call__(
+        self,
+        ctx,
+        *args,
+        **kwargs,
+    ) -> Awaitable[tuple[bool, str | None]] | tuple[bool, str | None]: ...
 
 
 def requires(*checks: Check):
