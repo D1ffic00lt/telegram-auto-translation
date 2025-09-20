@@ -1,4 +1,4 @@
-FROM python:3.13-slimfv
+FROM python:3.13-slim
 
 LABEL authors="d1ffic00lt"
 
