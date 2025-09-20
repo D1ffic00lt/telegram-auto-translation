@@ -5,7 +5,7 @@ from telebot.async_telebot import AsyncTeleBot
 
 from .template import Command
 from .guard import guard_commands
-from src.utils.translation import TranslationInterface  # FIXME
+from .utils.translation import TranslationInterface  # FIXME
 
 
 @guard_commands(on_fail=lambda _, r: print(r))

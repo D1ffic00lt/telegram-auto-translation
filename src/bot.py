@@ -3,7 +3,7 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_storage import StateMemoryStorage
 
 from services.translator import ChatTranslator, ChannelTranslator
-from utils.translation import MymemoryAPI
+from services.utils.translation import MymemoryAPI
 
 
 class TranslationBot(object):

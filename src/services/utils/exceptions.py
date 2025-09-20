@@ -1,7 +1,4 @@
-__all__ = (
-    "TranslationException",
-    "APIException"
-)
+__all__ = ("TranslationException", "APIException")
 
 
 class TranslationException(Exception):
