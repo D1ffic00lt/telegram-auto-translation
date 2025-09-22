@@ -35,7 +35,7 @@ class TranslationInterface(ABC):
 class MymemoryAPI(TranslationInterface):
     def __init__(
         self,
-        link: str = "https://api.mymemory.translated.net/get?q={text}&langpair={lang1}|{lang2}&de={email}",
+        link: str = "https://api.mymemory.translated.net/get",
         email_domains: list[str] = None,
     ):
         self.link = link
@@ -52,9 +52,10 @@ class MymemoryAPI(TranslationInterface):
         translation_language: str = "en",
     ) -> str:
         response: requests.Response = requests.get(
-            self._get_link(text, source_language=source_language, translation_language=translation_language)
+            self.link,
+            params={"q": text, "langpair": f"{source_language}|{translation_language}", "de": self._generate_email()},
         )
-        return self._process_response(response)
+        return self._process_response(response).replace("\\n", "\n")
 
     async def translate_async(
         self,
@@ -65,23 +66,17 @@ class MymemoryAPI(TranslationInterface):
     ) -> str:
         async with httpx.AsyncClient() as client:
             response: httpx.Response = await client.get(
-                self._get_link(text, source_language=source_language, translation_language=translation_language)
+                self.link,
+                params={
+                    "q": text,
+                    "langpair": f"{source_language}|{translation_language}",
+                    "de": self._generate_email(),
+                },
             )
         return self._process_response(response)
 
     def _generate_email(self) -> str:
         return "".join(random.choices(ascii_lowercase + digits, k=15)) + random.choice(self.email_domains)
-
-    def _get_link(
-        self,
-        text: str,
-        *,
-        source_language: str = "ru",
-        translation_language: str = "en",
-    ):
-        return deepcopy(self.link).format(
-            text=text, lang1=source_language, lang2=translation_language, email=self._generate_email()
-        )
 
     @staticmethod
     def _process_response(response: requests.Response | httpx.Response):
@@ -95,7 +90,7 @@ class MymemoryAPI(TranslationInterface):
 
         if response["quotaFinished"]:
             raise APIException("quota is left")
-
+        # print(response["responseData"]["translatedText"])
         return response["responseData"]["translatedText"]
 
 

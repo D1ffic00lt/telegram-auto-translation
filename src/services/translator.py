@@ -5,7 +5,7 @@ from telebot.async_telebot import AsyncTeleBot
 
 from .template import Command
 from .guard import guard_commands
-from .utils.translation import TranslationInterface  # FIXME
+from .utils.translation import TranslationInterface
 
 
 @guard_commands(on_fail=lambda _, r: print(r))
@@ -22,12 +22,11 @@ class ChatTranslator(Command):
         await self.bot.delete_message(message.chat.id, message.message_id)
         if not message.reply_to_message:
             return
-
         await self.bot.send_message(
             message.chat.id,
             formatting.format_text(
                 formatting.mcite(
-                    await self.translator.translate_async(message.reply_to_message.text or ""), expandable=True
+                    (await self.translator.translate_async(message.reply_to_message.text)), expandable=True
                 ),
                 separator="\n\n",
             ),
@@ -54,9 +53,9 @@ class ChannelTranslator(Command):
         if message.reply_to_message.forward_origin is None:
             await self.bot.edit_message_text(
                 formatting.format_text(
-                    formatting.escape_markdown(message.reply_to_message.text or ""),
+                    message.reply_to_message.text or "",
                     formatting.mcite(
-                        await self.translator.translate_async(message.reply_to_message.text or ""), expandable=True
+                        (await self.translator.translate_async(message.reply_to_message.text)), expandable=True
                     ),
                     separator="\n\n",
                 ),
@@ -69,7 +68,7 @@ class ChannelTranslator(Command):
             message.chat.id,
             formatting.format_text(
                 formatting.mcite(
-                    await self.translator.translate_async(message.reply_to_message.text or ""), expandable=True
+                    (await self.translator.translate_async(message.reply_to_message.text)), expandable=True
                 ),
                 separator="\n\n",
             ),
